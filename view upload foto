@@ -1,0 +1,37 @@
+->andFilterWhere(['like','jabatan.nama_jabatan' => $this->id_jabatan])
+            ->andFilterWhere(['like','klasifikasi.nama_klasifikasi'=> $this->id_klasifikasi])
+
+
+
+ $query->andFilterWhere([
+            'no_agenda_masuk' => $this->no_agenda_masuk,
+            'tanggal_surat_diterima' => $this->tanggal_surat_diterima,
+           ]);
+ $query->andFilterWhere(['like','surat_masuk.no_surat_masuk', $this->no_agenda_masuk])
+            ->andFilterWhere(['like', 'instruksi' => $this->instruksi])
+            ->andFilterWhere(['like', 'keterangan' => $this->keterangan]);
+       
+
+
+       
+       
+        // ->label(false)
+        // ->widget(FileInput::classname(),[
+        //     'pluginOption' => [ 
+        //         'showCaption' => false,
+        //         'showRemove'  => false,
+        //         'showUpload'  => false,
+        //         'browserClass'=> 'btn btn-primary btn-block',
+        //         'browseIcon'  =>'<i class="glyphicon glyphicon-camera"> </i>',
+        //         'browseLabel' =>'Pilih Foto'
+        //     ],
+        //         'options' => ['accept' =>'image/*'],
+
+        // ]
+
+
+
+echo $model->no_agenda_disposisi;
+echo "<br/>";
+echo $model->id_klasifikasi;
+?>
