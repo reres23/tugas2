@@ -20,7 +20,7 @@ class SuratKeluarSearch extends SuratKeluar
     {
         return [
             [['no_agenda_keluar'], 'integer'],
-            [['tanggal_surat_keluar','no_surat_keluar', 'tanggal_dikirim', 'id_klasifikasi','tujuan_surat', 'keterangan', 'file_surat'], 'safe'],
+            [['tanggal_surat_keluar','no_surat_keluar', 'tanggal_dikirim', 'klasifikasi','tujuan_surat', 'keterangan', 'file_surat'], 'safe'],
         ];
     }
 
@@ -56,7 +56,7 @@ class SuratKeluarSearch extends SuratKeluar
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith('klasifikasi');
+        $query->joinWith('perihal');
 
         $query->andFilterWhere([
             'no_agenda_keluar' => $this->no_agenda_keluar,
@@ -69,7 +69,7 @@ class SuratKeluarSearch extends SuratKeluar
                 ->andFilterWhere(['like', 'keterangan', $this->keterangan])
                 ->andFilterWhere(['like', 'no_surat_keluar', $this->no_surat_keluar])
                 ->andFilterWhere(['like', 'file_surat', $this->file_surat])
-                ->andFilterWhere(['like', 'klasifikasi.nama_klasifikasi', $this->id_klasifikasi]);
+                ->andFilterWhere(['like', 'klasifikasi.nama_klasifikasi', $this->klasifikasi]);
 
         return $dataProvider;
     }

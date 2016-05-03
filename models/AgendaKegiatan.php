@@ -7,8 +7,8 @@ use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use app\models\Pengguna;
-use app\models\SuratMasuk;
+use app\models\Pegawai; 
+
 
 
 /**
@@ -36,12 +36,20 @@ class AgendaKegiatan extends \yii\db\ActiveRecord
      * @inheritdoc
      */
     public function rules()
-    {
+    { //untuk validasi
         return [
-            [['kegiatan', 'tempat_kegiatan', 'id_pengguna'], 'required'],
-            [['tanggal_kegiatan','id_pengguna','no_agenda_masuk', 'keterangan'], 'safe'],
+            [['kegiatan', 'tempat_kegiatan', 'id_pegawai','tanggal_kegiatan'], 'required'], 
+            //atribut yang harud diisi
+            //untuk memastikan user menginput file tertentu
+            [['keterangan'], 'safe'],
+            //atribut yang tidak harus di isi
+            //untuk menskip validasi, artinya data inputan tidak divalidasi
             [['kegiatan', 'keterangan'], 'string'],
-            [['tempat_kegiatan'], 'string', 'max' => 100]
+            //harus bentuk string
+            //untuk mengecek apakah inputan user bertipe string atau tidak
+            [['tempat_kegiatan'], 'string', 'max' => 100],
+            [['id_pegawai'], 'exist', 'skipOnError' => true, 'targetClass' => Pegawai::className(), 'targetAttribute' => ['id_pegawai' => 'nip_pegawai']],
+        
         ];
     }
 
@@ -52,24 +60,25 @@ class AgendaKegiatan extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_kegiatan' => 'No.Agenda Kegiatan',
+            'id_kegiatan'      => 'No.Agenda Kegiatan',
             'tanggal_kegiatan' => 'Tanggal Kegiatan',
-            'kegiatan' => 'Kegiatan',
-            'tempat_kegiatan' => 'Tempat Kegiatan',
-            'id_pengguna' => 'Pelaksana Kegiatan',
-            'keterangan' => 'Keterangan',
-            'no_agenda_masuk' => 'No.Surat Masuk',
+            'kegiatan'         => 'Kegiatan',
+            'tempat_kegiatan'  => 'Tempat Kegiatan',
+            'id_pegawai'       => 'Pelaksana Kegiatan',
+            'keterangan'       => 'Keterangan',
+          
         ];
     }
 
-    public function getPengguna()
+    public function getPegawai() //relasi dengan tabel pegawai untuk memanggil naama pegawai
     {
-        return $this->hasOne(Pengguna::className(), ['id_pengguna' => 'id_pengguna']);
+        return $this->hasOne(Pegawai::className(), ['nip_pegawai' => 'id_pegawai']);
     }
 
-    public function getMasuk()
-    {
-        return $this->hasOne(SuratMasuk::className(), ['no_agenda_masuk' => 'no_agenda_masuk']);
-    }
+    //nip pegawai yang ada di tabel pegawai
+    //id pegawai yang ada di tabel agenda
+
+  
+    
     
 }

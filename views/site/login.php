@@ -11,10 +11,13 @@ $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
+        <!--    <?php echo Html::img('@web/gambar/smk.png', ['class' => 'img responsive', 'width' => '160px', 'height' => '175px','align' => 'center']); ?> <br> -->
+     
+   <!--    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Silakan login dengan username dan password Anda</p>
+    <p>Silakan login dengan username dan password Anda  </p> -->
 
+   
     <?php $form = ActiveForm::begin([
          'id' => 'login-form',
         //  'options' => ['class' => 'vertical-horizontal'],
@@ -26,6 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <!--memperbaiki tampilan login-->
     <!--dalam bentuk otomatis sesuai template-->
+
+      <?= Yii::$app->session->getFlash('loginError')  //untuk memanggil error ?> 
+
         <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
         <?= $form->field($model, 'password')->passwordInput() ?>
@@ -39,5 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php ActiveForm::end(); ?>
 
+  
     
 </div>

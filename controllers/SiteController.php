@@ -3,13 +3,12 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\Pengguna;
+use app\console\AccessRule;
 use app\models\User;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 
 class SiteController extends Controller
 {
@@ -18,6 +17,9 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                    'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                    ],
                 'only' => ['logout'],
                 'rules' => [
                     [
@@ -25,6 +27,26 @@ class SiteController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => [
+                            User::ROLE_ADMIN,
+                            User::ROLE_PETUGAS,
+                            User::ROLE_KEPALA_SEKOLAH,
+                        ],
+                    ],
+
+                     [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                    ],
+
+
+
                 ],
             ],
             'verbs' => [
@@ -71,8 +93,10 @@ class SiteController extends Controller
 
         if ($model->load($data_post)) {
             $user = User::findByUsername($data_post['LoginForm']['username']);
-            $model->login();
-           return $this->goBack();
+            if (!$model->login()) { //untuk memunculkan pesan error
+                Yii::$app->session->setFlash('loginError', 'Maaf password dan username yang Anda masukkan salah!');
+            }
+           return $this->goBack(); 
          }
         return $this->render('login', [
             'model' => $model,

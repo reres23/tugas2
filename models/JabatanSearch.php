@@ -19,7 +19,7 @@ class JabatanSearch extends Jabatan
     {
         return [
             [['id_jabatan'], 'integer'],
-            [['nama_jabatan'], 'safe'],
+            [['nama_jabatan'], 'string'],
         ];
     }
 

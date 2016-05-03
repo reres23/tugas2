@@ -6,9 +6,6 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\SuratDisposisi;
-use app\models\Jabatan;
-use app\models\SuratMasuk;
-use app\models\Klasifikasi;
 
 /**
  * SuratDisposisiSearch represents the model behind the search form about `app\models\SuratDisposisi`.
@@ -22,8 +19,7 @@ class SuratDisposisiSearch extends SuratDisposisi
     {
         return [
             [['no_agenda_disposisi'], 'integer'],
-            [['no_agenda_masuk','tanggal_surat_diterima','id_jabatan','id_klasifikasi','catatan','instruksi'], 'safe'],
-            [['instruksi', 'catatan'],'string'],
+            [['instruksi', 'catatan'], 'safe'],
         ];
     }
 
@@ -47,9 +43,10 @@ class SuratDisposisiSearch extends SuratDisposisi
     {
         $query = SuratDisposisi::find();
 
+        // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => ['pageSize' => 10],
         ]);
 
         $this->load($params);
@@ -60,27 +57,14 @@ class SuratDisposisiSearch extends SuratDisposisi
             return $dataProvider;
         }
 
-        $query->joinWith('klasifikasi');
-        $query->joinWith('masuk');
-        $query->joinWith('jabatan');
-
+        // grid filtering conditions
         $query->andFilterWhere([
             'no_agenda_disposisi' => $this->no_agenda_disposisi,
-            'tanggal_surat_diterima' => $this->tanggal_surat_diterima,
-            
+        ]);
 
-           ]);
+        $query->andFilterWhere(['like', 'instruksi', $this->instruksi])
+            ->andFilterWhere(['like', 'catatan', $this->catatan]);
 
-        // $query->andFilterWhere([
-            // 'or',
-            // ['like','surat_masuk.asal_surat', $this->no_agenda_masuk],
-            // ['like','surat_masuk.no_surat_masuk', $this->no_agenda_masuk],
-        $query->andFilterWhere(['like','jabatan.nama_jabatan', $this->id_jabatan])
-             ->andFilterWhere(['like','klasifikasi.nama_klasifikasi', $this->id_klasifikasi])
-             ->andFilterWhere(['like','instruksi', $this->instruksi])
-             ->andFilterWhere(['like','catatan', $this->catatan]);
-          
-          
         return $dataProvider;
     }
 }

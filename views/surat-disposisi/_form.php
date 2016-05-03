@@ -2,12 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use app\models\Jabatan;
-use app\models\SuratMasuk;
-use app\models\Klasifikasi;
-use kartik\date\DatePicker;
-
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SuratDisposisi */
@@ -16,40 +11,9 @@ use kartik\date\DatePicker;
 
 <div class="surat-disposisi-form">
 
-    <?php $form = ActiveForm::begin(
-        [
-            'options' =>['enctype' => 'multipart/form-data']
-        ]
+    <?php $form = ActiveForm::begin(); ?>
 
-    ); ?>
 
-     <div class="form-group">
-        <label>Nomor Surat </label>
-        <?= Html::activeDropDownList($model,'no_agenda_masuk', ArrayHelper::map(SuratMasuk::find()->all(),'no_agenda_masuk','no_surat_masuk'),
-        ['class' =>'form-control']) ?>
-    </div>
-
-     <div class="form-group">
-        <label>Asal Surat</label>
-        <?= Html::activeDropDownList($model,'no_agenda_masuk', ArrayHelper::map(SuratMasuk::find()->all(),'no_agenda_masuk','asal_surat'),
-        ['class' =>'form-control']) ?>
-    </div>
-
-  <?= $form->field($model,'tanggal_surat_diterima')->widget(DatePicker::classname(), [
-        'options' =>['placeholder' => 'pilih tanggal surat diterima'],
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'yyyy-mm-dd'
-        ]
-        ]);?>
-
-     <div class="form-group">
-        <label>Perihal Surat </label>
-        <?= Html::activeDropDownList($model,'id_klasifikasi', ArrayHelper::map(Klasifikasi::find()->all(),'id_klasifikasi','nama_klasifikasi'),
-        ['class' =>'form-control']) ?>
-    </div>
-
-   
     <div class="form-group">
         <label> Jabatan</label>
         <?php foreach ($databaru as $row) { ?>
@@ -62,12 +26,10 @@ use kartik\date\DatePicker;
 
     <?= $form->field($model, 'instruksi')->textarea(['rows' => 6]) ?>
 
-
     <?= $form->field($model, 'catatan')->textarea(['rows' => 6]) ?>
 
-
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Ubah', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Tambah Data' : 'Ubah Data', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

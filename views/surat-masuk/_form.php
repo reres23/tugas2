@@ -44,8 +44,8 @@ use app\models\Klasifikasi;
         ]);?>
 
     <div class="form-group">
-        <label>Klasifikasi Surat </label>
-            <?= Html::activeDropDownList($model,'id_klasifikasi', ArrayHelper::map(Klasifikasi::find()->all(),'id_klasifikasi', 'nama_klasifikasi'),
+        <label>Perihal Surat </label>
+            <?= Html::activeDropDownList($model,'klasifikasi', ArrayHelper::map(Klasifikasi::find()->all(),'id_klasifikasi', 'nama_klasifikasi'),
                 //berupa dropdown list, 
                 ['class'=>'form-control'])?>
     </div>
@@ -54,8 +54,6 @@ use app\models\Klasifikasi;
     <?= $form->field($model, 'jenis_surat')->dropDownList(['surat khusus' => 'Surat khusus', 'surat umum' => 'Surat umum'], ['prompt' => '']) ?>
 
     <?= $form->field($model, 'asal_surat')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'tujuan_surat')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'keterangan')->textarea(['rows' => 6]) ?>
 

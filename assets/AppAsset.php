@@ -24,6 +24,7 @@ class AppAsset extends AssetBundle
          'ionicons-2.0.1/css/ionicons.min.css',
          'themes/AdminLTE2/dist/css/AdminLTE.min.css',
          'themes/AdminLTE2/dist/css/skins/_all-skins.min.css',
+         'css/site.css', //untuk memperkecil ukuran tanggal mengambil dari folder web
 
     ];
     public $js = [

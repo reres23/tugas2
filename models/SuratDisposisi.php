@@ -3,27 +3,21 @@
 namespace app\models;
 
 use Yii;
-use yii\base\NotSupportedException;
-use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use app\models\Jabatan;
+use app\models\RelasiDisposisi;
 use app\models\SuratMasuk;
-use app\models\Klasfikasi;
-
 
 /**
  * This is the model class for table "surat_disposisi".
  *
  * @property integer $no_agenda_disposisi
- * @property integer $no_agenda_masuk
+ * @property integer $agenda_masuk
  * @property integer $id_jabatan
- * @property integer $id_pengguna
- * @property integer $instruksi
+ * @property string $instruksi
+ * @property string $catatan
  */
 class SuratDisposisi extends \yii\db\ActiveRecord
 {
+    public $no_agenda_masuk;  
     /**
      * @inheritdoc
      */
@@ -38,9 +32,9 @@ class SuratDisposisi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['no_agenda_masuk','tanggal_surat_diterima'], 'required'],
-            [['no_agenda_masuk','id_jabatan', 'tanggal_surat_diterima','id_klasifikasi','instruksi','catatan'], 'safe'],
-            [['instruksi', 'catatan'], 'string'], 
+            [['instruksi','catatan'], 'required'],
+            [['instruksi', 'catatan'], 'string'],
+            [['agenda_masuk'], 'integer'],
         ];
     }
 
@@ -51,30 +45,22 @@ class SuratDisposisi extends \yii\db\ActiveRecord
     {
         return [
             'no_agenda_disposisi' => 'No Agenda Disposisi',
-            // 'no_agenda_masuk' => 'No Agenda Masuk',
-            'id_klasifikasi' => 'Perihal Surat',
-            'tanggal_surat_diterima' => 'Tanggal Surat Diterima',
-            'id_jabatan' => 'Diteruskan ke',
             'instruksi' => 'Instruksi',
-            'catatan' => 'Keterangan',
+            'catatan' => 'Catatan',
+            'agenda_masuk' => 'Agenda Masuk',
+          
         ];
     }
 
-   
-    public function getJabatan()
+     public function getDetail()
     {
-        return $this->hasOne(Jabatan::className(), ['id_jabatan' => 'id_jabatan']);
+        return $this->hasMany(RelasiDisposisi::className(), ['agenda_disposisi' => 'no_agenda_disposisi']);
     }
 
      public function getMasuk()
     {
-        return $this->hasOne(SuratMasuk::className(), ['no_agenda_masuk' => 'no_agenda_masuk']);
+        return $this->hasOne(SuratMasuk::className(), ['no_agenda_masuk' => 'agenda_masuk']);
     }
 
-    public function getKlasifikasi()
-    {
-        return $this->hasOne(Klasifikasi::className(),['id_klasifikasi' => 'id_klasifikasi']);
-    }
-
-
+   
 }

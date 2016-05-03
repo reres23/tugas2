@@ -5,13 +5,23 @@ namespace app\controllers;
 use Yii;
 use app\models\SuratMasuk;
 use app\models\SuratMasukSearch;
+use app\models\FormLaporanMasuk; //untuk form laporan surat masuk
 use yii\web\UploadedFile; //untuk upload file
 use yii\web\Controller;
 use yii\web\NotFoundHttpException; //untuk menampilkan exception
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;//untuk rules
 use yii\data\ActiveDataProvider;
+use mPDF;
 
+use app\console\AccessRule;
+use app\models\User;
+
+
+// use app\models\LembarDisposisi;
+// use app\models\Jabatan;
+// use app\models\DetailDisposisi;
+// use app\models\Klasifikasi;
 /**
  * SuratMasukController implements the CRUD actions for SuratMasuk model.
  */
@@ -22,30 +32,62 @@ class SuratMasukController extends Controller
         return [
 
         'access' => [
-        'class' => AccessControl::className(),
-        'rules'=>[
-        [
-        'actions'=>[
-        'index',
-        'view',
-        'create',
-        'update',
-        'delete',
-        'download',
+            'class' => AccessControl::className(),
+            'ruleConfig' => [
+                'class' => AccessRule::className(),
+            ],
+
+            'rules' => [
+                [
+
+                'actions' => ['logout'],
+                'allow' => true,
+                'roles' => ['@'],
+                ],
+
+                [
+
+                'actions' => ['index', 'create','update','delete','view','download','laporan','print'],
+                'allow' => true,
+                    'roles' => [
+
+                        User::ROLE_ADMIN,
+                        User::ROLE_PETUGAS,
+                   
+
+                     ],
+                ],
+
+
+
+                [
+
+                'actions' => ['index','view','download','laporan'],
+                'allow' => true,
+                    'roles' => [
+
+                        User::ROLE_KEPALA_SEKOLAH,
+
+                     ],
+                ],
+
+                 [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                ],
+
+            ],
         ],
 
-        'allow'=> true,
-        'roles' =>['@']
-        ],
-        ],
-        ],
-
-        'verbs' => [
-        'class' => VerbFilter::className(),
-        'actions' => [
-        'delete' => ['post'],
-        ],
-        ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
         ];
     }
 
@@ -100,23 +142,32 @@ class SuratMasukController extends Controller
             // $model->validate();
             // var_dump($model->getErrors());exit;
 
-            $model->save();
+            if($model->save()) {
 
-            Yii::$app->session->setFlash('success');
+            Yii::$app->session->setFlash('suratmasukSuccess', "Data berhasil disimpan");
             //jika berhasil maka disimpan
             return $this->redirect(['index']);
              //maka akan dialihkan ke index
 
+          
+             } 
+             //else {
+                    
+             //        Yii::$app->session->setFlash('error',"Data gagal disimpan");
+             //    }
 
-        // if($model->load(Yii::$app->request->post()) && $model->save()) {
-        //     return $this->redirect(['view', 'id' => $model->no_agenda_masuk]);
+                return $this->refresh();
+
         } else {
             return $this->render('create', [
                 //jika tidak berhasil maka akan kembali ke view create
                 'model' => $model,
                 ]);
         }
+        
+        
     }
+
 
     /**
      * Updates an existing SuratMasuk model.
@@ -146,8 +197,7 @@ class SuratMasukController extends Controller
                 $model->save();
 
 
-        // if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            // return $this->redirect(['view', 'id' => $model->no_agenda_masuk]);
+                 Yii::$app->session->setFlash('suratmasukUpdate', "Data berhasil diubah");
                 return $this->redirect(['index']);
             } else {
             return $this->render('update', [ //jika tidak berhasil maka akan dialihkan ke halaman view update untuk diisi data
@@ -166,7 +216,48 @@ class SuratMasukController extends Controller
     {
         $this->findModel($id)->delete(); //mencari id yang akan di hapus, kemudian dilakukan perintah hapus
 
+        Yii::$app->session->setFlash('suratmasukDelete', "Data berhasil diubah");
         return $this->redirect(['index']); //setelah itu kembali ke index
+    }
+
+    public function actionLaporan() {
+        $model = new FormLaporanMasuk();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            if ($model->jenisSurat == 0) {
+                $model->jenisSurat = 'surat khusus';
+            }
+            else {
+                $model->jenisSurat = 'surat umum';
+            }
+
+            $hasil = SuratMasuk::find()
+                ->where(['jenis_surat' => $model->jenisSurat])
+                ->andWhere(['>=', 'tanggal_surat_masuk',$model->tanggalAwal])
+                ->andWhere(['<=', 'tanggal_surat_masuk', $model->tanggalAkhir])
+                ->all();
+
+            // cetak pdf
+            $html = $this->renderPartial('laporanmasuk', ['hasil' => $hasil]);
+            $mpdf = new \mPDF('c','A4','','',0,0,0,0,0,0);
+                $mpdf->SetDisplayMode('fullpage');
+                $mpdf->list_indent_first_level = 1;
+                $mpdf->WriteHTML($html);
+                $mpdf->Output('laporan_surat_masuk.pdf', 'D');
+            exit;
+
+        }
+
+        $jenisSurat = [
+            'surat khusus',
+            'surat umum',
+        ];
+
+        return $this->render('_formLaporanMasuk',[
+            'model' => $model,
+            'jenisSurat' => $jenisSurat,
+        ]);
     }
 
     /**
@@ -176,6 +267,8 @@ class SuratMasukController extends Controller
      * @return SuratMasuk the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+    
     protected function findModel($id) //fungsi penemuan
     {
         if (($model = SuratMasuk::findOne($id)) !== null) { //jika ditemukan 1 id surat masuk kosong
@@ -201,4 +294,25 @@ class SuratMasukController extends Controller
             return $this->redirect(['index']);
         }
     }
+
+    // public function actionPrint($id)
+    // {   
+        
+    //     $model = $this->findModel($id);
+
+    //     $disposisi = LembarDisposisi::find()->all();
+    //     $detail = DetailDisposisi::find()->all();
+    //     $jabatan = Jabatan::find()->all();
+    //       $klasifikasi = Klasifikasi::find()->all();
+
+
+    //     return $this->renderPartial('print', [
+    //         'model' => $model,
+    //         'jabatan' => $jabatan,
+    //         'disposisi' => $disposisi,
+    //         'detail' => $detail,
+    //          'klasifikasi' => $klasifikasi,
+
+    //     ]);
+    // }
 }

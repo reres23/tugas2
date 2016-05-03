@@ -8,8 +8,8 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use app\models\Pengguna;
-use app\models\SuratDisposisi;
+use app\models\Pegawai;
+use app\models\DetailDisposisi;
 
 /**
  * This is the model class for table "jabatan".
@@ -34,7 +34,7 @@ class Jabatan extends ActiveRecord
     {
         return [
             [['nama_jabatan'], 'required'],
-            [['nama_jabatan'], 'string', 'max' => 30]
+            [['nama_jabatan'], 'string', 'max' => '30']
         ];
     }
 
@@ -49,14 +49,14 @@ class Jabatan extends ActiveRecord
         ];
     }
 
-    public function getPengguna()
+    public function getPegawai()
     {
-        return $this->hasMany(Pengguna::className(), ['id_jabatan' => 'id_jabatan']);
+        return $this->hasMany(Pegawai::className(), ['id_posisi' => 'id_jabatan']);
     }
 
-    public function getDiposisi()
+    public function getDisposisi()
     {
-        return $this->hasMany(SuratDisposisi::className(), ['id_jabatan' => 'id_jabatan']);
+        return $this->hasMany(DetailDisposisi::className(), ['no_jabatan' => 'id_jabatan']);
     }
 
 

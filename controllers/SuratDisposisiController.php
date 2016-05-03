@@ -4,46 +4,29 @@ namespace app\controllers;
 
 use Yii;
 use app\models\SuratDisposisi;
-use app\models\Jabatan;
 use app\models\SuratDisposisiSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\data\ActiveDataProvider;
+use app\models\Jabatan;
+use app\models\RelasiDisposisi;
+use app\models\SuratMasuk;
+
 /**
  * SuratDisposisiController implements the CRUD actions for SuratDisposisi model.
  */
 class SuratDisposisiController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-
-        'access' => [
-        'class' => AccessControl::className(),
-        'rules'=>[
-        [
-        'actions'=>[
-            'index',
-            'view',
-            'create',
-            'update',
-            'delete',
-            'print',
-        ],
-
-        'allow'=> true,
-        'roles' =>['@']
-        ],
-        ],
-        ],
-
-
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -81,33 +64,62 @@ class SuratDisposisiController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-
-       // print_r('expression');exit();
+    public function actionCreate($no_agenda_masuk)
+    { 
+       
         $databaru = Jabatan::find()->all();
-        $model = new SuratDisposisi();
+       
+        $suratDisposisi = new SuratDisposisi();
 
         $data_post = Yii::$app->request->post();
-         // print_r($data_post['jabatan']);exit();
 
-        if (!empty($data_post)) {
-            foreach ($data_post['jabatan'] as $key =>$value) {
-            $model = new SuratDisposisi();
-            $model->load($data_post);
-            $model->id_jabatan = $value;
-            // $model->validate();
-            // var_dump($model->getErrors());exit;
-            $model->save();
-            }
+        $cek = SuratDisposisi::find() 
+                ->where(['agenda_masuk' => $no_agenda_masuk])
+                ->count();
 
-            return $this->redirect(['index']);
+        if($cek > 0) {
+            $cari = SuratDisposisi::find()
+                ->where(['agenda_masuk' => $no_agenda_masuk])
+                ->one();
+      
+            return $this->redirect(['surat-disposisi/view', 'id' => $cari->no_agenda_disposisi]);
+        }
+
+        if ($suratDisposisi->load($data_post)) {
+            $suratDisposisi->agenda_masuk = Yii::$app->request->get('no_agenda_masuk');    
+                    
+                if (!empty($data_post)) {
+                    if ($suratDisposisi->load($data_post) && $suratDisposisi->save()) {
+                
+                            if (isset($data_post['jabatan'])) {
+                                foreach ($data_post['jabatan'] as $id_jabatan) {
+                                    $model = new RelasiDisposisi();
+                                    $model->agenda_disposisi = $suratDisposisi->no_agenda_disposisi;
+                                    $model->no_jabatan = $id_jabatan;
+                                    $model->id_detail;
+                                     $model->save();
+                                     // print_r($data_post['jabatan']);exit();
+                                }
+                            }
+
+                    return $this->redirect(['index']);
+                    }     
+             
+                 } else {
+                
+                     return $this->render('create', [
+                        'model' => $suratDisposisi,
+                        'databaru' => $databaru,
+                    ]);
+                }
+           
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $suratDisposisi,
                 'databaru'=>$databaru,
             ]);
         }
+        
     }
 
     /**
@@ -116,6 +128,8 @@ class SuratDisposisiController extends Controller
      * @param integer $id
      * @return mixed
      */
+
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -157,21 +171,4 @@ class SuratDisposisiController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-    public function actionPrint($id) {
-     $model = $this->findModel($id);
-     $jabatan = Jabatan::find()->all();
-    
-        //print_r($instruksi);exit();
-
-        return $this->renderPartial('print', [
-                'model' => $model,
-                'jabatan' =>$jabatan,
-               
-            ]);
-    }
 }
-
-
-
- 

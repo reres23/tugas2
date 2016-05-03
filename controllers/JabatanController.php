@@ -12,6 +12,10 @@ use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 
 
+use app\console\AccessRule;
+use app\models\User;
+
+
 /**
  * JabatanController implements the CRUD actions for Jabatan model.
  */
@@ -21,25 +25,38 @@ class JabatanController extends Controller
     {
         return [
 
-         'access' => [
-                    'class'=> AccessControl::className(), //untuk pengaturan yang bisa di akses di sistem
-                    'rules'=>[
-                        [
-                            'actions' =>[
-                                        'index',
-                                        'view',
-                                        'create',
-                                        'update',
-                                        'delete',
-                                        ],
-
-                                        'allow' => true,
-                                        'roles' =>['@']
-                            ],
-                        ] ,
+        'access' => [
+                'class' => AccessControl::className(),
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+    
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
-        
+                    [
+                        'actions' => ['index', 'create','update','delete','view'],
+                        'allow' => true,
+                        'roles' => [
+                            User::ROLE_ADMIN,
+                           
+                        ],
+                    ],
 
+                     [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                    ],
+
+
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -86,8 +103,12 @@ class JabatanController extends Controller
         $model = new Jabatan();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            Yii::$app->session->setFlash('jabatanSuccess', 'Data berhasil disimpan!');
+
             return $this->redirect(['index']);
         } else {
+
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -105,8 +126,12 @@ class JabatanController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+             Yii::$app->session->setFlash('jabatanUpdate', 'Data berhasil diubah');
             return $this->redirect(['view', 'id' => $model->id_jabatan]);
         } else {
+
+           
+
             return $this->render('update', [
                 'model' => $model,
             ]);
@@ -123,6 +148,8 @@ class JabatanController extends Controller
     {
         $this->findModel($id)->delete();
 
+        Yii::$app->session->setFlash('jabatanDelete', 'Data berhasil dihapus');
+        
         return $this->redirect(['index']);
     }
 

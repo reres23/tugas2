@@ -57,9 +57,9 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()==1) { 
-            $apalah = User::findByUsername($this->username);            
+            $check = User::findByUsername($this->username);            
             $session = \Yii::$app->session;
-            $session->set('id',$apalah->id_pengguna);
+            $session->set('id',$check->id);
 
 
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);

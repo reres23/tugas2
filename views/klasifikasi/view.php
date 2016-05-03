@@ -10,6 +10,21 @@ $this->title ='Detail Data Klasifikasi';
 $this->params['breadcrumbs'][] = ['label' => 'Klasifikasi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php if (Yii::$app->session->hasFlash('klasifikasiSuccess')) { ?>
+    <div class="alert alert-success alert-dismissable">
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">x</button>
+    <h4><i class="icon fa fa-check"></i>Data berhasil disimpan!</h4>
+    </div>
+<?php } ?>
+
+<?php if (Yii::$app->session->hasFlash('klasifikasiUpdate')) { ?>
+    <div class="alert alert-success alert-dismissable">
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">x</button>
+    <h4> <i class="icon fa fa-check"></i>Data berhasil diubah! </h4>
+    </div>
+    <?php } ?>
+
 <div class="klasifikasi-view">
 
     <h1><?= Html::encode($this->title) ?></h1>

@@ -11,39 +11,77 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 
+use app\console\AccessRule; //memanggil akses rule
+use app\models\User; //memanggil model user
+
 /**
  * AgendaKegiatanController implements the CRUD actions for AgendaKegiatan model.
  */
 class AgendaKegiatanController extends Controller
 {
     public function behaviors()
+    //  * Behaviors declared in this method will be attached to the component automatically (on demand).
     {
     return [
-        'access'=>[
-        'class' => AccessControl::className(),
-        'rules'=>[
-        [
-        'actions'=>[
-        'index',
-        'view',
-        'create',
-        'update',
-        'delete',
+        'access' => [
+            'class' => AccessControl::className(),
+            // Access Control Filter (ACF) is a simple authorization method that is best used by applications that only need some simple access control. 
+            'ruleConfig' => [
+                'class' => AccessRule::className(),
+            ],
 
-        ],
+            'rules' => [
+                [
 
-        'allow'=> true,
-        'roles' =>['@']
-        ],
-        ],
-        ],
+                'actions' => ['logout'],
+                'allow' => true,
+                'roles' => ['@'], //menu logout digunakan untuk semua user yang terdaftar resmi
+                ],
 
+                [
+
+                'actions' => ['index', 'create','update','delete','view'],
+                'allow' => true,
+                    'roles' => [
+
+                        User::ROLE_ADMIN,
+                        User::ROLE_PETUGAS,
+                   
+
+                     ],
+                ],
+
+                [
+
+                'actions' => ['index','view'],
+                'allow' => true,
+                    'roles' => [
+
+                        User::ROLE_KEPALA_SEKOLAH,
+
+                     ],
+                ],
+
+                 [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                ],
+
+            ],
+        ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
                 ],
             ],
+
+            // VerbFilter is an action filter that filters by HTTP request methods.
+            //metode penyaringan berdasarkan permintaan HTTP
+
         ];
     }
 
@@ -53,11 +91,11 @@ class AgendaKegiatanController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new AgendaKegiatanSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new AgendaKegiatanSearch(); //mewakili model untuk form pencarian
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams); 
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel' => $searchModel, //hasil pencarian akan ditampilkan ke index
             'dataProvider' => $dataProvider,
         ]);
     }

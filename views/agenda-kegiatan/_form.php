@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use app\models\Pengguna;
+use app\models\Pegawai;
 use app\models\SuratMasuk;
 use kartik\date\DatePicker;
 
@@ -22,7 +22,7 @@ use kartik\date\DatePicker;
         'options'=> ['placeholder' => 'pilih tanggal kegiatan'],
             'pluginOptions' =>[
                 'autoclose' =>true,
-                'format' =>'yyyy-mm--dd'
+                'format' =>'yyyy-mm-dd'
             ]
         ]);
     ?>
@@ -32,18 +32,13 @@ use kartik\date\DatePicker;
 
     <div class="form-group">
         <label>Pelaksana Kegiatan</label>
-        <?= Html::activeDropDownList($model,'id_pengguna', ArrayHelper::map(Pengguna::find()->all(), 'id_pengguna','nama_pengguna'),
+        <?= Html::activeDropDownList($model,'id_pegawai', ArrayHelper::map(Pegawai::find()->all(), 'nip_pegawai','nama_pegawai'),
         ['class' => 'form-control']) ?>
     </div>
 
-
+   
     <?= $form->field($model, 'keterangan')->textarea(['rows' => 6]) ?>
-
-       <div class="form-group">
-        <label>Nomor Surat Masuk</label>
-        <?= Html::activeDropDownList($model, 'no_agenda_masuk', ArrayHelper::map(SuratMasuk::find()->all(), 'no_agenda_masuk','no_surat_masuk'),
-        ['class' => 'form-control']) ?>
-    </div>
+    
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Ubah', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

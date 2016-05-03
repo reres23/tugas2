@@ -24,7 +24,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
+    </p><!--    <?php
+function TanggalIndo($date){
+    $BulanIndo = array("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+
+    $tahun = substr($date, 0, 4);
+    $bulan = substr($date, 5, 2);
+    $tgl   = substr($date, 8, 2);
+
+    $result = $tgl . " " . $BulanIndo[(int)$bulan-1] . " ". $tahun;     
+    return($result);
+}
+?>
+<?php echo TanggalIndo($model->tanggal_dikirim)?> -->
+ 
 
     <?= DetailView::widget([
         'model' => $model,
@@ -33,11 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'no_surat_keluar',
             'tanggal_surat_keluar',
             'tanggal_dikirim',
-            // 'perihal_surat',
 
-             [                      // the owner name of the model
+             [                      
                 'label' => 'Klasifikasi Surat',
-                'value' => $model->klasifikasi->nama_klasifikasi
+                'value' => $model->perihal->nama_klasifikasi
              ],
              
             'tujuan_surat',

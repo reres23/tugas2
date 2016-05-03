@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\Klasifikasi;
+// use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SuratMasuk */
@@ -36,10 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'tanggal_surat_diterima',
             'jenis_surat',
             'asal_surat',
-            'tujuan_surat',
             [                      // the owner name of the model
-                'label' => 'Klasifikasi Surat',
-                'value' => $model->klasifikasi->nama_klasifikasi
+                'label' => 'Perihal Surat',
+                'value' => $model->perihal->nama_klasifikasi
              ],
 
             'keterangan:ntext',

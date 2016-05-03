@@ -6,8 +6,8 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\AgendaKegiatan;
-use app\models\Pengguna;
-use app\models\SuratMasuk;
+use app\models\Pegawai;
+
 
 /**
  * AgendaKegiatanSearch represents the model behind the search form about `app\models\AgendaKegiatan`.
@@ -21,7 +21,7 @@ class AgendaKegiatanSearch extends AgendaKegiatan
     {
         return [
             [['id_kegiatan'], 'integer'],
-            [['tanggal_kegiatan', 'kegiatan', 'id_pengguna', 'no_agenda_masuk','tempat_kegiatan', 'keterangan'], 'safe'],
+            [['tanggal_kegiatan', 'kegiatan', 'id_pegawai','tempat_kegiatan', 'keterangan'], 'safe'],
         ];
     }
 
@@ -47,7 +47,7 @@ class AgendaKegiatanSearch extends AgendaKegiatan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => ['pageSize' => 10],
+            'pagination' => ['pageSize' => 10], //untuk pagination
         ]);
 
         $this->load($params);
@@ -58,21 +58,19 @@ class AgendaKegiatanSearch extends AgendaKegiatan
             return $dataProvider;
         }
 
-        $query->joinWith('pengguna');
-        $query->joinWith('masuk');
-
-
+        $query->joinWith('pegawai'); //melakukan relasi dengan tabel pegawai
+      
         $query->andFilterWhere([
             'id_kegiatan' => $this->id_kegiatan,
             'tanggal_kegiatan' => $this->tanggal_kegiatan,
             // 'no_agenda_masuk' => $this->no_agenda_masuk,
         ]);
 
-        $query->andFilterWhere(['like', 'kegiatan', $this->kegiatan])
+        $query->andFilterWhere(['like', 'kegiatan', $this->kegiatan]) //query untuk filter search 
             ->andFilterWhere(['like', 'tempat_kegiatan', $this->tempat_kegiatan])
             ->andFilterWhere(['like', 'keterangan', $this->keterangan])
-            ->andFilterWhere(['like', 'pengguna.nama_pengguna',$this->id_pengguna])
-            ->andFilterWhere(['like', 'surat_masuk.no_surat_masuk', $this->no_agenda_masuk]);
+            ->andFilterWhere(['like', 'pegawai.nama_pegawai',$this->id_pegawai]);
+       
 
         return $dataProvider;
     }

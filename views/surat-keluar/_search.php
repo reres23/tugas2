@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 
     <?= // $form->field($model, 'tanggal_dikirim') ?>
 
-    <?= $form->field($model, 'id_klasifikasi') ?>
+    <?= $form->field($model, 'klasifikasi') ?>
 
     <?php $form->field($model, 'tujuan_surat') ?>
 

@@ -10,6 +10,15 @@ $this->title = 'Detail Data Jabatan ';
 $this->params['breadcrumbs'][] = ['label' => 'Data Jabatan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php if (Yii::$app->session->hasFlash('jabatanUpdate')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil diubah!</h4>
+  </div>
+
+<?php } ?>
+
 <div class="jabatan-view">
 
     <h1><?= Html::encode($this->title) ?></h1>

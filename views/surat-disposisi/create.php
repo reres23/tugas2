@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\SuratDisposisi */
 
-$this->title = 'Tambah Surat Disposisi';
+$this->title = 'Tambah Data Surat Disposisi';
 $this->params['breadcrumbs'][] = ['label' => 'Surat Disposisi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'databaru'=>$databaru
+         'databaru'=>$databaru,
     ]) ?>
 
 </div>

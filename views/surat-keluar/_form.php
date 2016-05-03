@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
 use app\models\Klasifikasi;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SuratKeluar */
@@ -24,9 +25,13 @@ use app\models\Klasifikasi;
 
     <?= $form->field($model,'tanggal_surat_keluar')->widget(DatePicker::classname(),[
         'options' => ['placeholder' => 'pilih tanggal surat keluar'],
+            // 'convertFormat' => true,
+            // 'value' => date('yyyy-mm-dd'),
+            // 'type' => DatePicker::TYPE_COMPONENT_APPEND,
              'pluginOptions' =>[
+                // 'language' => 'id',
                 'autoclose' =>true,
-                'format' => 'yyyy-mm-dd'
+                'format' => 'yyyy-mm-dd',
             ]
         ]);
     ?>
@@ -42,8 +47,8 @@ use app\models\Klasifikasi;
         ?>
 
     <div class="form-group">
-        <label>Klasifikasi Surat </label>
-            <?= Html::activeDropDownList($model,'id_klasifikasi', ArrayHelper::map(Klasifikasi::find()->all(),'id_klasifikasi', 'nama_klasifikasi'),
+        <label>Perihal Surat </label>
+            <?= Html::activeDropDownList($model,'klasifikasi', ArrayHelper::map(Klasifikasi::find()->all(),'id_klasifikasi', 'nama_klasifikasi'),
                 //berupa dropdown list, 
                 ['class'=>'form-control'])?>
     </div>

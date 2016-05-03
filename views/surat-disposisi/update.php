@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\SuratDisposisi */
 
-$this->title = 'Ubah Data Surat Disposisi';
-$this->params['breadcrumbs'][] = ['label' => 'Surat Disposisi', 'url' => ['index']];
+$this->title = 'Update Surat Disposisi: ' . $model->no_agenda_disposisi;
+$this->params['breadcrumbs'][] = ['label' => 'Surat Disposisis', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->no_agenda_disposisi, 'url' => ['view', 'id' => $model->no_agenda_disposisi]];
-$this->params['breadcrumbs'][] = 'Ubah Data';
+$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="surat-disposisi-update">
 
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = 'Ubah Data';
 
     <?= $this->render('_form', [
         'model' => $model,
-        'type' => 'update'
+        'type' => 'update',
     ]) ?>
 
 </div>

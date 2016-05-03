@@ -11,6 +11,24 @@ use yii\widgets\LinkPager;
 $this->title = 'Data Jabatan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php if (Yii::$app->session->hasFlash('jabatanSuccess')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil disimpan!</h4>
+  </div>
+
+<?php } ?>
+
+
+<?php if (Yii::$app->session->hasFlash('jabatanDelete')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil hapus!</h4>
+  </div>
+
+<?php } ?>
+
 <div class="jabatan-index">
 
     <h1><?= Html::encode($this->title) // menampilkan judul dalam bentuk html ?></h1> 

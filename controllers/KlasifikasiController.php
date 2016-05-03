@@ -11,6 +11,9 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 
+use app\console\AccessRule;
+use app\models\User;
+
 /**
  * KlasifikasiController implements the CRUD actions for Klasifikasi model.
  */
@@ -21,24 +24,37 @@ class KlasifikasiController extends Controller
         return [
 
         'access' => [
-                    'class'=> AccessControl::className(), //untuk pengaturan yang bisa di akses di sistem
-                    'rules'=>[
-                        [
-                            'actions' =>[
-                                        'index',
-                                        'view',
-                                        'create',
-                                        'update',
-                                        'delete',
-                                        'change-password',
-                                        ],
-
-                                        'allow' => true,
-                                        'roles' =>['@']
-                            ],
-                        ] ,
+                'class' => AccessControl::className(),
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+    
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index', 'create','update','delete','view'],
+                        'allow' => true,
+                        'roles' => [
+                            User::ROLE_ADMIN,
+                           
+                        ],
                     ],
 
+                     [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                    ],
+
+
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -85,6 +101,8 @@ class KlasifikasiController extends Controller
         $model = new Klasifikasi();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            Yii::$app->session->setFlash('klasifikasiSuccess', 'Data berhasil disimpan');
             return $this->redirect(['view', 'id' => $model->id_klasifikasi]);
         } else {
             return $this->render('create', [
@@ -104,6 +122,8 @@ class KlasifikasiController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            Yii::$app->session->setFlash('klasifikasiUpdate', 'Data berhasil diubah');
             return $this->redirect(['view', 'id' => $model->id_klasifikasi]);
         } else {
             return $this->render('update', [
@@ -121,6 +141,8 @@ class KlasifikasiController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        Yii::$app->session->setFlash('klasifikasiDelete', 'Data berhasil di hapus');
 
         return $this->redirect(['index']);
     }

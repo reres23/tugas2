@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\models\Pengguna;
+use app\models\Pegawai;
 use app\models\SuratMasuk;
 
 /* @var $this yii\web\View */
@@ -39,13 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'label' => 'Pelaksana Kegiatan',
-                'value' => $model->pengguna->nama_pengguna
+                'value' => $model->pegawai->nama_pegawai
             ],
 
-            [
-                'label' => 'Nomor Surat Masuk',
-                'value' => $model->masuk->no_surat_masuk
-            ],
 
              'keterangan:ntext',
         ],

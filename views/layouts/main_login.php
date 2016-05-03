@@ -41,7 +41,8 @@ AppAsset::register($this);
   
   <!-- /.login-logo -->
   <div class="login-logo">
-    <a href="../../index2.html">SMK Muhammadiyah Kramat</a>
+    <a href="../../index2.html">SMK Muhammadiyah Kramat </a>
+  
   </div>
   <div class="login-box-body">
   

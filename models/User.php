@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\IdentityInterface;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "users".
@@ -25,31 +26,34 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+
+    const ROLE_ADMIN = 10;
+    const ROLE_PETUGAS = 20; 
+    const ROLE_KEPALA_SEKOLAH = 30;
+    /**
+     * @inheritdoc
+     */
+    public function behaviors() {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }       
 
     public static function tableName()
     {
-        return 'pengguna'; //menggunakan tabel pengguna
+        return '{{%user}}'; //menggunakan tabel pengguna
     }
 
-    //mendefinisikan variabel
-    public $id_pengguna;
-    public $username;
-    public $password;
-    public $auth_key;
-    public $accessToken;
-
-
     public function rules()
-
     {
         return [
-            [['username','passsword'],'required'],//atribut yang diminta harus diisi
-            //atribut yang dibutuhkan dalam login
-            
-
-            [['username','password'],'string','max' => 100],
-          
-            //atribut yang dibutuhkan disesuaikan dengan tipe data yang ada di tabel
+            [['username', 'role'], 'required'],
+            [['password_hash'], 'safe'],
+            [['username'], 'required', 'on' => 'userUpdateProfil'],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
     }
 
@@ -82,29 +86,19 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
-    public static function findIdentity($id_pengguna)
+    public static function findIdentity($id)
     //membuat function pencarian berdasarkan id pengguna
     {
        //return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
-        return static::findOne($id_pengguna);//hanya dapat melakukan pencarian berdasarkan id dengan sifat tidak
+        // return static::findOne($id_pengguna);//hanya dapat melakukan pencarian berdasarkan id dengan sifat tidak
         //dapat diubah-ubah
 
+        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
      * @inheritdoc
      */
-    
-    // public static function findIdentityByAccessToken($token, $type = null)
-    // {
-    //     foreach (self::$users as $user) {
-    //         if ($user['accessToken'] === $token) {
-    //             return new static($user);
-    //         }
-    //     }
-
-    //     return null;
-    // }
 
     /**
      * Finds user by username
@@ -123,7 +117,8 @@ class User extends ActiveRecord implements IdentityInterface
 
         // return null;
 
-        return static::findOne(['username' => $username]);
+        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+
     }
 
     /**
@@ -159,12 +154,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        //return $this->password === $password;
-        //return Yii::$app->security->validatePassword($password, $this->password_hash);
-        if (md5($password)==$this->password_hash) {
-            return true;
-        } 
-        return false;
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
 
         //kemudian di dalam model mengambil password has
 
@@ -172,7 +162,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function setPassword($password)
     {
-        $this->password_hash = md5($password);//mengubah password untuk di md5-in
+        // $this->password_hash = md5($password);//mengubah password untuk di md5-in
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
 
    
@@ -189,6 +180,13 @@ class User extends ActiveRecord implements IdentityInterface
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');//untuk reset password
     }
+
+
+      public function getPegawai()
+    {
+        return $this->hasOne(Pegawai::className(),['nip_pegawai' => 'nip']);
+    }
+
 
 
 }

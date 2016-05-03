@@ -6,8 +6,6 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Pengguna;
-use app\models\Jabatan;
-use app\models\HakAkses;
 
 /**
  * PenggunaSearch represents the model behind the search form about `app\models\Pengguna`.
@@ -20,8 +18,8 @@ class PenggunaSearch extends Pengguna
     public function rules()
     {
         return [
-            [['id_pengguna'], 'integer'],
-            [['nama_pengguna','id_hak_akses','username', 'password', 'password_hash', 'auth_key', 'email', 'foto', 'status'], 'safe'],
+            [['id'], 'integer'],
+            [['username', 'status','nip','role'], 'safe'],
         ];
     }
 
@@ -45,10 +43,11 @@ class PenggunaSearch extends Pengguna
     {
         $query = Pengguna::find();
 
-        $dataProvider = new ActiveDataProvider([
-           'query' => $query,
-           'pagination' => ['pageSize' => 10],
+        // add conditions that should always apply here
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => ['pageSize' => 10]
         ]);
 
         $this->load($params);
@@ -58,24 +57,27 @@ class PenggunaSearch extends Pengguna
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith('akses');
 
+           $query->joinWith('pegawai');
+
+        // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengguna' => $this->id_pengguna,
-            // 'id_hak_akses' => $this->id_hak_akses,
-            // 'id_jabatan' => $this->id_jabatan,
+            'id' => $this->id,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'role' => $this->role,
+         
         ]);
 
-        $query->andFilterWhere(['like', 'nama_pengguna', $this->nama_pengguna])
-            ->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'password', $this->password])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
+        $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'foto', $this->foto])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'hak_akses.nama_hak_akses', $this->id_hak_akses]);
+            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
+            // ->andFilterWhere(['like', 'status', $this->status])
+            // // ->andFilterWhere(['like','role', $this->role])
+            ->andFilterWhere(['like','pegawai.nama_pegawai', $this->nip]);
 
+           
         return $dataProvider;
     }
 }

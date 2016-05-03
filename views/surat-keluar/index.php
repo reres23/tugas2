@@ -14,10 +14,34 @@ $this->title = 'Surat Keluar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<?php if (Yii::$app->session->hasFlash('suratkeluarSuccess')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil disimpan!</h4>
+  </div>
+
+<?php } ?>
+
+<?php if (Yii::$app->session->hasFlash('suratkeluarUpdate')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil diubah!</h4>
+  </div>
+
+<?php } ?>
+
+<?php if (Yii::$app->session->hasFlash('suratkeluarDelete')){ ?>
+  <div class="alert alert-success alert-dismissable">
+  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+  <h4><i class="icon fa fa-check"></i>Data berhasil dihapus!</h4>
+  </div>
+
+<?php } ?>
+
 <?php if(Yii::$app->session->hasFlash('gagal')) { ?>
     <div class="alert alert-danger alert-dismissable">
         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">x</button>
-        <h4><i class="icon fa fa-check"></i>Gagal!</h4>
+        <h4><i class="icon fa fa-check"></i>Unduh file gagal!</h4>
     </div>
 <?php } ?>
 
@@ -66,11 +90,11 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'file_surat',
 
             [
-                'attribute'=>'id_klasifikasi',
-                'label' => 'Klasifikasi Surat',
+                'attribute'=>'klasifikasi',
+                'label' => 'Perihal Surat',
                 'format'=>'html',
                 'value'=>function($data){
-                        return $data->klasifikasi->nama_klasifikasi;
+                        return $data->perihal->nama_klasifikasi;
                 }
             ],
 

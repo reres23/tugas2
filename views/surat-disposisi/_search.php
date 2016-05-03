@@ -17,17 +17,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'no_agenda_disposisi') ?>
 
-    <?= $form->field($model, 'no_agenda_masuk') ?>
-    
-    <?= $form->field($model, 'tanggal_surat_diterima') ?>
-
-    <?= $form->field($model, 'id_jabatan') ?>
-
-    <?= $form->field($model, 'id_klasifikasi') ?>
 
     <?= $form->field($model, 'instruksi') ?>
 
-     <?= $form->field($model, 'catatan') ?>
+    <?= $form->field($model, 'catatan') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

@@ -38,13 +38,14 @@ class SuratKeluar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['no_surat_keluar', 'tanggal_surat_keluar', 'id_klasifikasi', 'tujuan_surat'], 'required'],
-    
-            [['tanggal_surat_keluar', 'id_klasifikasi','tanggal_dikirim','tanggal_dikirim','keterangan','file_surat'], 'safe'],
+            [['no_surat_keluar', 'tanggal_surat_keluar', 'klasifikasi', 'tujuan_surat'], 'required'],
+    // 'message' => 'tidak boleh kosong'
+            [['tanggal_dikirim','keterangan','file_surat'], 'safe'],
             [['keterangan'], 'string'],
-            [['no_surat_keluar'], 'string', 'max' => 50],
-            [['tujuan_surat', 'file_surat'], 'string', 'max' => 100],
-            [['file_surat'],'file'],
+            [['tanggal_dikirim','tanggal_surat_keluar'], 'date'],
+            [['no_surat_keluar'], 'string', 'max' => '50'],
+            [['tujuan_surat', 'file_surat'], 'string', 'max' =>'50'],
+            [['file_surat'],'file', 'extensions' => ['zip', 'doc','jpg', 'png']],
          ];
     }
 
@@ -58,16 +59,16 @@ class SuratKeluar extends \yii\db\ActiveRecord
             'no_surat_keluar' => 'No.Surat Keluar',
             'tanggal_surat_keluar' => 'Tanggal Surat Keluar',
             'tanggal_dikirim' => 'Tanggal Dikirim',
-            'id_klasifikasi' => 'Klasifikasi Surat',
+            'klasifikasi' => 'Perihal Surat',
             'tujuan_surat' => 'Tujuan Surat',
             'keterangan' => 'Keterangan',
             'file_surat' => 'File Surat',
         ];
     }
 
-     public function getKlasifikasi()
+     public function getPerihal()
     {
-        return $this->hasOne(Klasifikasi::className(),['id_klasifikasi' => 'id_klasifikasi']);
+        return $this->hasOne(Klasifikasi::className(),['id_klasifikasi' => 'klasifikasi']);
     }
 
 }

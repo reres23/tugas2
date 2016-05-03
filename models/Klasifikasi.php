@@ -37,9 +37,9 @@ class Klasifikasi extends \yii\db\ActiveRecord
     {
         return [
             [['kode_klasifikasi', 'nama_klasifikasi', 'keterangan'], 'required'],
-            [['keterangan'], 'string'],
-            [['kode_klasifikasi'], 'string', 'max' => 30],
-            [['nama_klasifikasi'], 'string', 'max' => 100]
+            [['keterangan'], 'string' ,'message' => 'tidak boleh kosong'],
+            [['kode_klasifikasi'], 'string', 'max' => '30'],
+            [['nama_klasifikasi'], 'string', 'max' => '50']
         ];
     }
 
@@ -49,22 +49,22 @@ class Klasifikasi extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_klasifikasi' => 'Id Klasifikasi',
+            'id_klasifikasi'   => 'Id Klasifikasi',
             'kode_klasifikasi' => 'Kode Klasifikasi',
             'nama_klasifikasi' => 'Nama Klasifikasi',
-            'keterangan' => 'Keterangan',
+            'keterangan'       => 'Keterangan',
         ];
     }
 
 
      public function getMasuk()
     {
-        return $this->hasMany(SuratMasuk::className(),['id_klasifikasi' => 'id_klasifikasi']);
+        return $this->hasMany(SuratMasuk::className(),['klasifikasi' => 'id_klasifikasi']);
     }
 
      public function getKeluar()
     {
-        return $this->hasMany(SuratKeluar::className(),['id_klasifikasi' => 'id_klasifikasi']);
+        return $this->hasMany(SuratKeluar::className(),['klasifikasi' => 'id_klasifikasi']);
     }
 
     public function getDisposisi() 

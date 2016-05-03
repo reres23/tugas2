@@ -11,6 +11,14 @@ use yii\widgets\LinkPager;
 $this->title = 'Klasifikasi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php if (Yii::$app->session->hasFlash('klasifikasiDelete')) { ?>
+    <div class="alert alert-success alert-dismissable">
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">x</button>
+    <h4> <i class="icon fa fa-check"></i>Data berhasil dihapus!</h4>
+    </div>
+<?php } ?>
+
 <div class="klasifikasi-index">
 
     <h1><?= Html::encode($this->title) ?></h1>

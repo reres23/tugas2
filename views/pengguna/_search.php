@@ -14,27 +14,24 @@ use yii\widgets\ActiveForm;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-    <!-- atribut yang dapat dicari di tampilan view-->
 
-    <?= $form->field($model, 'id_pengguna') ?>
-
-    <?= $form->field($model, 'nama_pengguna') ?>
+    <?= $form->field($model, 'id') ?>
 
     <?= $form->field($model, 'username') ?>
 
-    <?= $form->field($model, 'password') ?>
+    <?php // $form->field($model, 'auth_key') ?>
 
     <?php // $form->field($model, 'password_hash') ?>
 
-    <?php // echo $form->field($model, 'auth_key') ?>
+    <?= $form->field($model, 'status') ?>
 
-    <?= $form->field($model, 'email') ?>
+    <?= $form->field($model, 'created_at') ?>
 
-    <?= $form->field($model, 'foto') ?>
+    <?= $form->field($model, 'updated_at') ?>
 
-    <?= $form->field($model, 'id_hak_akses') ?>
+    <?php= $form->field($model, 'role') ?>
 
-     <?= $form->field($model, 'status') ?>
+    <?php= $form->field($model, 'nip') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

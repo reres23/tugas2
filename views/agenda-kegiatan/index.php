@@ -56,26 +56,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'tempat_kegiatan',
 
             [
-                'attribute' => 'id_pengguna',
+                'attribute' => 'id_pegawai',
                 'label' => 'Pelaksana Kegiatan',
                 'format' => 'html',
                 'value' => function($data) {
-                    return $data->pengguna->nama_pengguna;
+                    return $data->pegawai->nama_pegawai;
                 }
             ],
 
-            //'keterangan:ntext',
-
-
-            [
-                'attribute' => 'no_agenda_masuk',
-                'label' => 'Nomor Surat Masuk',
-                'format' => 'html',
-                'value' => function($data) {
-                   return $data->masuk->no_surat_masuk;
-               }
-            ],
-
+            'keterangan:ntext',
 
 
             ['class' => 'yii\grid\ActionColumn',

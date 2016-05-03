@@ -5,67 +5,84 @@ namespace app\controllers;
 use Yii;
 use app\models\Pengguna;
 use app\models\PenggunaSearch;
-use yii\web\UploadedFile;
+use app\models\DataUser;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 
+use app\console\AccessRule;
+use app\models\User;
+
 
 /**
  * PenggunaController implements the CRUD actions for Pengguna model.
  */
+
+
 class PenggunaController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
-        'access' => [
-                    'class'=> AccessControl::className(), //untuk pengaturan yang bisa di akses di sistem
-                    'rules'=>[
-                        [
-                            'actions' =>[
-                                        'index',
-                                        'view',
-                                        'create',
-                                        'update',
-                                        'delete',
-                                        'changepassword',
-                                        ],
 
-                                        'allow' => true,
-                                        'roles' =>['@']
-                            ],
-                        ] ,
+        'access' => [
+                'class' => AccessControl::className(),
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+    
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
-        
+                    [
+                        'actions' => ['index', 'create','update','delete','view'],
+                        'allow' => true,
+                        'roles' => [
+                            User::ROLE_ADMIN,
+                        ],
+                    ],
+                    [
+                        'actions' => ['profil'],
+                        'allow' => true,
+                        'roles' => [
+                            '@',
+                        ],
+                    ],
+
+
+                ],
+        ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
-                'actions' => [//pengaturan hapus
-                    'delete' => ['post'], //maka digunakan method post
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
+        
     }
 
     /**
      * Lists all Pengguna models.
      * @return mixed
      */
-
     public function actionIndex()
     {
         $searchModel = new PenggunaSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        // $model = Pengguna::find();
-        // print_r($model);exit();
-        
-       
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            
         ]);
     }
 
@@ -74,7 +91,7 @@ class PenggunaController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) //untuk menampilkan data
+    public function actionView($id)
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -86,37 +103,43 @@ class PenggunaController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new Pengguna();
-        $data_post = Yii::$app->request->post();//berarti untuk menunjukkan bahwa data di form ada
-        //kemudian di kirim
-      // print_r($post); //lalu di cetak untuk di cek debug
-        //print_r tidak bersama tipe datanya
-       // exit();//menghentikan proses
+    public function actionCreate($nip_pegawai) {
+        $model = new DataUser();
 
-        if ($model->load($data_post)) {
+        $hak_akses = [
+            10 => 'Admin',
+            20 => 'Petugas',
+            30 => 'Kepala Sekolah',
+        ];
 
-              $model->password_hash=md5($data_post['Pengguna']['password']);
-            //$model->validate();
-            //var_dump($model->getErrors());exit;
-            //print data bersama tipe datanya
+        $count = User::find()
+            ->where(['nip' => $nip_pegawai])
+            ->count();
 
-            $imageName = $model->nama_pengguna;
-            $model->foto = UploadedFile::getInstance($model,'foto');
-            $model->foto->saveAs('foto_pegawai/'.$imageName.'.'.$model->foto->extension);
-            $model->foto = 'foto_pegawai/'.$imageName.'.'.$model->foto->extension;
-                
-            $model->save();
+        if ($count > 0) {
+            $user = User::find()
+                ->where(['nip' => $nip_pegawai])
+                ->one();
 
-            Yii::$app->session->setFlash('success');
-
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return $this->redirect(['pengguna/view', 'id' => $user->id]);
         }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->nip_pegawai = Yii::$app->request->get('nip_pegawai');
+            if ($model->create()) {
+
+                Yii::$app->session->setFlash('penggunaSuccess', 'Data berhasil disimpan');
+                return $this->redirect(['pengguna/index']);
+            }
+        }
+
+
+
+        return $this->render('create', [
+            'model' => $model,
+            'hak_akses' => $hak_akses,
+          
+        ]);
     }
 
     /**
@@ -125,34 +148,50 @@ class PenggunaController extends Controller
      * @param integer $id
      * @return mixed
      */
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $user = User::findOne($model->id);
 
-        $newImage = $model->foto;
+        $dataUser = new DataUser;
+        $dataUser->id = $model->id;
+        $dataUser->username = $model->username;
+        $dataUser->nip_pegawai = $model->nip;
+        $dataUser->hak_akses = $model->role;
 
-        $data_post =Yii::$app->request->post();
 
-       if ($model->load($data_post)) {
+        $hak_akses = [
+            10 => 'Admin',
+            20 => 'Petugas',
+            30 => 'Kepala Sekolah',
+        ];
 
-            $imageName = $model->nama_pengguna;
-            $model->file = UploadedFile::getInstance($model,'foto');
-            if (!empty($model->foto)) {
-                $model->foto->saveAs ('foto_pegawai/'.$imageName.'.'.$model->foto->extension);
-                $model->foto = 'foto_pegawai/'.$imageName.'.'.$model->foto->extension;
-                } else {
-                    $model->foto = $newImage;
-                }
-            
-            $model->save();
-
-            return $this->redirect(['view', 'id' => $model->id_pengguna]);
+        
+        if ($dataUser->load(Yii::$app->request->post())  && $dataUser->update()) {
+             Yii::$app->session->setFlash('penggunaUpdate', 'Data berhasil diubah');
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model' => $dataUser,
+                'user' => $user,
+                'hak_akses' => $hak_akses,
+              
             ]);
         }
+
+
+
+
+        // if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        //     return $this->redirect(['view', 'id' => $model->id]);
+        // } else {
+        //     return $this->render('update', [
+        //         'model' => $model,
+        //     ]);
+        // }
     }
+
 
     /**
      * Deletes an existing Pengguna model.
@@ -164,45 +203,10 @@ class PenggunaController extends Controller
     {
         $this->findModel($id)->delete();
 
+         Yii::$app->session->setFlash('penggunaDelete', 'Data berhasil dihapus');
         return $this->redirect(['index']);
     }
 
-
-    // public function actionChangePassword($id)
-    // {
-    //     $model = $this->findModel($id);
-    //     print_r($model);
-    // }
-
-     public function actionChangepassword(){      
-        $data = Yii::$app->user;
-        $id = $data->id;
-        $model = new Pengguna();
-        $data_post = Yii::$app->request->post();
-        if ($model->load($data_post)) {
-            $user = Pengguna::findOne($id);
-            $pass = $data_post['Pengguna']['password_lama'];
-            if ($user->password_hash == md5($pass) && ($data_post['Pengguna']['password'] == $data_post['Pengguna']['password_ulang'])){
-
-                $user->password_hash =  md5($data_post['Pengguna']['password']);
-                Yii::$app->session->setFlash('oldPasswordSuccess');
-                if ($user->load($data_post)) {         
-                    $user->save();
-                    return $this->refresh();
-                }
-            } else {
-               return $this->render('changepassword',[
-                'model'=>$model,
-                'false_password'=>true
-                ]);
-           }
-         } else {
-          return $this->render('changepassword',[
-            'model'=>$model,
-            ]);
-        }
-    }
-    
     /**
      * Finds the Pengguna model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -218,5 +222,4 @@ class PenggunaController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-        
-    }
+}

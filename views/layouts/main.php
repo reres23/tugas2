@@ -10,10 +10,11 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use yii\helpers\Url;
-use app\models\Pengguna;
-  $id_uname = Yii::$app->user;
-  $id = $id_uname->id;
-  $user = Pengguna::findOne($id);
+use app\models\Pegawai;
+use app\models\User;
+  // $id_uname = Yii::$app->user;
+  // $id = $id_uname->id;
+  // $user = Pengguna::findOne($id);
 
 AppAsset::register($this);
  if(Yii::$app->controller->action->id==='login') { //memanggil controller yang mempunyai action login
@@ -60,7 +61,7 @@ AppAsset::register($this);
     <nav class="navbar navbar-static-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="../../index2.html" class="navbar-brand">Beranda</a>
+          <a href="<?=Url::to(['site/index']);?>" class="navbar-brand">Beranda</a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
           </button>
@@ -72,40 +73,45 @@ AppAsset::register($this);
            <!--  <li class="active"><a href="#">Data Pengguna <span class="sr-only">(current)</span></a></li> -->
 
            <!--MENU-->
+            <?php if (Yii::$app->user->identity->role == 10): ?>
+             <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown">Manajemen Data <span class="caret"></span></a>
 
-           <li class="dropdown">
-              <a href="" class="dropdown-toggle" data-toggle="dropdown">Manajemen Data <span class="caret"></span></a>
-             
-              <ul class="dropdown-menu" role="menu">
-             
-                <li><a href="<?=Url::to(['pengguna/index']);?>">Data Pengguna</a></li>
-                <li><a href="<?=Url::to(['jabatan/index']);?>">Data Jabatan</a></li>
-                <li><a href="<?=Url::to(['klasifikasi/index']);?>">Data Klasifikasi</a></li>
-             
-              </ul>
-            </li>
+               
+                <ul class="dropdown-menu" role="menu">
+               
+                <!--   <li><a href="<?=Url::to(['pengguna/index']);?>">Data Pengguna</a></li> -->
+                  <li><a href="<?=Url::to(['jabatan/index']);?>">Data Jabatan</a></li>
+                  <li><a href="<?=Url::to(['klasifikasi/index']);?>">Data Klasifikasi</a></li>
+                  <li><a href="<?=Url::to(['pegawai/index']);?>">Data Pegawai</a></li>
+
+               
+                </ul>
+              </li>
+            <?php endif; ?>
 
             <li class="dropdown">
               <a href="" class="dropdown-toggle" data-toggle="dropdown">Manajemen Surat <span class="caret"></span></a>
              
               <ul class="dropdown-menu" role="menu">
+              
              
                 <li><a href="<?=Url::to(['surat-masuk/index']);?>">Surat Masuk</a></li>
                 <li><a href="<?=Url::to(['surat-keluar/index']);?>">Surat Keluar</a></li>
-                <li><a href="<?=Url::to(['surat-disposisi/index']);?>">Surat Disposisi</a></li>
+                <li><a href="<?=Url::to(['lembar-disposisi/index']);?>">Surat Disposisi</a></li>
              
               </ul>
             </li>
 
 
-            <li><a href="<?=Url::to(['agenda-kegiatan/index']);?>">Manajemen Agenda</a></li>
+            <!-- <li><a href="<?=Url::to(['agenda-kegiatan/index']);?>">Manajemen Agenda</a></li> -->
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manajemen Laporan <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Laporan Surat Masuk</a></li>
-                <li><a href="#">Laporan Surat Keluar</a></li>
-                <li><a href="#">Laporan Surat Disposisi</a></li>
+                <li><a href="<?=Url::to(['surat-masuk/laporan']);?>">Laporan Surat Masuk</a></li>
+                <li><a href="<?=Url::to(['surat-keluar/laporan']);?>">Laporan Surat Keluar</a></li>
+                <!-- <li><a href="<?=Url::to(['lembar-disposisi/laporan']);?>">Laporan Surat Disposisi</a></li> -->
                 <!-- <li class="divider"></li>
                 <li><a href="#">Separated link</a></li>
                 <li class="divider"></li>
@@ -128,17 +134,17 @@ AppAsset::register($this);
               <!-- Menu Toggle Button -->
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <!-- The user image in the navbar-->
-                <img src="<?= Url::to('@web/' . $user->foto) ?>" class="user-image" alt="User Image">
+                <img src="<?= Url::to('@web/' . Yii::$app->user->identity->pegawai->foto) ?>" class="user-image" alt="User Image">
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs">Alexander Pierce</span>
+                <span class="hidden-xs"><?php echo Yii::$app->user->identity->username ?></span>
               </a>
               <ul class="dropdown-menu">
                 <!-- The user image in the menu -->
                 <li class="user-header">
-                  <img src="<?= Url::to('@web/' . $user->foto) ?>" class="img-circle" alt="User Image">
+                  <img src="<?= Url::to('@web/' . Yii::$app->user->identity->pegawai->foto) ?>" class="img-circle" alt="User Image">
 
                   <p>
-                    Alexander Pierce 
+                   <?php echo Yii::$app->user->identity->username ?>
                    
                   </p>
                 </li>
@@ -147,7 +153,7 @@ AppAsset::register($this);
                 <!-- Menu Footer-->
                 <li class="user-footer">
                   <div class="pull-left">
-                    <a href="<?= Url::to(['pengguna/changepassword','id'=>$id]) ?>" class="btn btn-default btn-flat">Ubah Password</a>
+                    <a href="<?= Url::to(['pegawai/profil','id'=>Yii::$app->user->identity->pegawai->nip_pegawai]) ?>" class="btn btn-default btn-flat">Profil</a>
                   </div>
                   <div class="pull-right">
                     <a href="<?= Url::to(['site/logout']) ?>" class="btn btn-default btn-flat" data-method='post'>Keluar</a>
@@ -197,7 +203,7 @@ AppAsset::register($this);
     <!-- /.container -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
+  <!-- <footer class="main-footer">
     <div class="container">
       <div class="pull-right hidden-xs">
         <b>Version</b> 2.3.2
@@ -205,8 +211,8 @@ AppAsset::register($this);
       <strong>Copyright &copy; 2014-2015 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
       reserved.
     </div>
-    <!-- /.container -->
-  </footer>
+    <!/.container -->
+ 
 </div>
 <!-- ./wrapper -->
 

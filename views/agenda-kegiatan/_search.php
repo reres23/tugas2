@@ -23,11 +23,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'tempat_kegiatan') ?>
 
-    <?= $form->field($model, 'id_pengguna') ?>
+    <?php // $form->field($model, 'id_pegawai') ?>
 
     <?php $form->field($model, 'keterangan') ?>
 
-    <?php  $form->field($model, 'no_agenda_masuk') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

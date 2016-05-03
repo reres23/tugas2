@@ -4,9 +4,18 @@ $params = require(__DIR__ . '/params.php');
 
 $config = [
     'id' => 'basic',
+    'language' => 'id-ID',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Asia/Jakarta',
+    
+    // 'date' => 'dd-mm-yyyy',
     'components' => [
+       // 'formatter' => [
+       //      'class' => 'yii\i18n\Formatter',
+       //      'dateFormat' => 'php:dd-mm-yyyy',
+       // ],
+
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Tsalis-w3b',
@@ -63,4 +72,20 @@ if (YII_ENV_DEV) {
     ];
 }
 
-return $config;
+return  $config;
+
+// return [
+//         //set target language to be Indonesia
+
+//         'language' => 'id',
+
+//         //set source language to be English
+
+//         'sourceLanguage' => 'en-US',
+//     ];
+
+//     $config ;
+
+
+   
+ 
